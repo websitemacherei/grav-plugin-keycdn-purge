@@ -1,0 +1,31 @@
+name: Keycdn purge
+version: 0.1.0
+description: purges keycdn cache on admin edit 
+icon: plug
+author:
+  name: Jan Stümmel
+  email: info@janstuemmel.de
+keywords: grav, plugin, etc
+license: MIT
+
+form:
+  validation: strict
+  fields:
+    enabled:
+      type: toggle
+      label: PLUGIN_ADMIN.PLUGIN_STATUS
+      highlight: 1
+      default: 0
+      options:
+        1: PLUGIN_ADMIN.ENABLED
+        0: PLUGIN_ADMIN.DISABLED
+      validate:
+        type: bool
+    token:
+      type: text
+      label: PLUGIN_KEYCDN_PURGE.TOKEN
+      help: PLUGIN_KEYCDN_PURGE.TOKEN_HELP
+    zone_id:
+      type: text
+      label: PLUGIN_KEYCDN_PURGE.ZONE_ID
+      help: PLUGIN_KEYCDN_PURGE.TOKEN_ID_HELP

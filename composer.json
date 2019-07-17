@@ -1,0 +1,16 @@
+{
+    "name": "websitemacherei/grav-plugin-keycdn-purge",
+    "description": "Sleekshop integration for grav cms",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Jan Stümmel",
+            "email": "info@janstuemmel.de"
+        }
+    ],
+    "autoload": {
+    },
+    "require": {
+        "guzzlehttp/guzzle": "^6.3"
+    }
+}

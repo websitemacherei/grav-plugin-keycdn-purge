@@ -1,0 +1,7 @@
+en:
+  PLUGIN_KEYCDN_PURGE:
+    TOKEN: KeyCDN Token
+    TOKEN_HELP: Paste your keycdn token
+    ZONE_ID: Zone ID
+    ZONE_ID_HELP: Paste the keycdn zone id you want to purge
+
