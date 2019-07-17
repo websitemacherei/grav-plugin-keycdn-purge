@@ -5,7 +5,10 @@ icon: plug
 author:
   name: Jan Stümmel
   email: info@janstuemmel.de
-keywords: grav, plugin, etc
+homepage: https://github.com/websitemacherei/grav-plugin-keycdn-purge
+keywords: grav, plugin, etc, cdn, keycdn, pull, zone
+bugs: https://github.com/websitemacherei/grav-plugin-keycdn-purge/issues
+docs: https://github.com/websitemacherei/grav-plugin-keycdn-purge/blob/master/README.md
 license: MIT
 
 form:
