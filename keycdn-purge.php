@@ -31,8 +31,6 @@ class KeycdnPurgePlugin extends Plugin {
       'onAdminAfterSave'     => ['purgeCache', 10],
       'onAdminAfterSaveAs'   => ['purgeCache', 10],
       'onAdminAfterDelete'   => ['purgeCache', 10],
-      'onAdminAfterAddMedia' => ['purgeCache', 10],
-      'onAdminAfterDelMedia' => ['purgeCache', 10],
       'onShutdown'           => ['onShutdown', 10000]
     ]);
   }
