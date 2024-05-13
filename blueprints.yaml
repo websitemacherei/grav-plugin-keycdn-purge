@@ -1,5 +1,5 @@
 name: Keycdn purge
-version: 0.1.0
+version: 0.2.1
 description: purges keycdn cache on admin edit 
 icon: plug
 author:
@@ -32,3 +32,17 @@ form:
       type: text
       label: PLUGIN_KEYCDN_PURGE.ZONE_ID
       help: PLUGIN_KEYCDN_PURGE.TOKEN_ID_HELP
+    cache_key_host.enabled:
+      type: toggle
+      label: Cache Key Host
+      highlight: 1
+      default: 0
+      options:
+        1: PLUGIN_ADMIN.ENABLED
+        0: PLUGIN_ADMIN.DISABLED
+      validate:
+        type: bool      
+    cache_key_host.url:
+      type: text
+      help: 'e.g. https:/autnotizen.de'
+      label: Key Host URL
