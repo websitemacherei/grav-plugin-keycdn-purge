@@ -1,0 +1,16 @@
+form:
+  fields:
+    tabs:
+      fields:
+        options:
+          type: tab
+
+          fields:
+            keycdn:
+              ordering@: -99
+              type: display
+              style: vertical
+              label: false
+              markdown: true
+              data-content@: '\Grav\Plugin\KeycdnPurgePlugin::getCurrentPublishedStatus'
+

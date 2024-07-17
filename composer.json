@@ -9,6 +9,9 @@
         }
     ],
     "autoload": {
+      "psr-4": {
+        "Websitemacherei\\KeycdnPurge\\": "src/"
+      }
     },
     "require": {
         "guzzlehttp/guzzle": "^6.3"
