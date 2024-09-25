@@ -75,7 +75,7 @@ class Scanner {
 
     return $golive;
   }
-  
+
   public static function filterGoliveNow() {
     self::$files = [];
     self::scan('user/pages');
@@ -141,7 +141,7 @@ class Scanner {
     // soll auch wieder offline?
     if(!isset($data['published'])
       && isset($data['unpublish_date'])) {
-		  
+
 		// offline in der Zukunft
       if(strtotime($data['unpublish_date']) > time()) {
         $data['real_published_status'] = 2;
@@ -158,8 +158,8 @@ class Scanner {
 
   public static function showSearchableTable($files = []) {
     if(empty($files)) {
-      golivescanner::scan('user/pages');
-      golivescanner::sortFilesLatest();
+      self::scan('user/pages');
+      self::sortFilesLatest();
       $files = self::$files;
     }
 

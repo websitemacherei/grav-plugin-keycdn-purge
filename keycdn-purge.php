@@ -102,13 +102,13 @@ class KeycdnPurgePlugin extends Plugin
     if (!empty($config['enabled'])) {
       $scheduler = $e['scheduler'];
       $golives = Scanner::filterGoliveNow();
-      //$golives = Scanner::filterUpcomingGolive();
+      $upcomings = Scanner::filterUpcomingGolive(43261);
 
       $job = $scheduler->addFunction(function () use ($golives) {
 
-		$keyHost = Grav::instance()['config']->get('plugins.keycdn-purge.cache_key_host.enabled') ? $this->config->get('plugins.keycdn-purge.cache_key_host.url') : '';
-		
-		if(!empty($golives)) {
+        $keyHost = Grav::instance()['config']->get('plugins.keycdn-purge.cache_key_host.enabled') ? $this->config->get('plugins.keycdn-purge.cache_key_host.url') : '';
+
+        if(!empty($golives)) {
           $goliveURLs = [];
 
           // collect URLS
@@ -121,7 +121,7 @@ class KeycdnPurgePlugin extends Plugin
           ];
 
           foreach($golives AS $golive) {
-			$golivePage = new Page;
+            $golivePage = new Page;
             $golivePage = $golivePage->init(new SplFileInfo($golive['file']));
 
             $grav = Grav::instance();
@@ -134,16 +134,16 @@ class KeycdnPurgePlugin extends Plugin
             // Hersteller
             if (!empty($golivePage->header()->taxonomy['hersteller'])) {
               foreach ($golivePage->header()->taxonomy['hersteller'] as $hersteller) {
-                $urls[] = $keyHost . '/automarken/hersteller:' . $hersteller;
+                $urls[] = $keyHost . '/automarken/hersteller:' . urlencode($hersteller);
               }
             }
 
             if (in_array('honda', $golivePage->header()->taxonomy['hersteller'])) {
               $urls[] = $keyHost . '/specials/honda';
             }
-		  }
-		  
-		  // INVALIDATE URLS
+          }
+
+          // INVALIDATE URLS
           if(!empty($urls)) {
             $client = new Guzzle();
 
@@ -155,11 +155,11 @@ class KeycdnPurgePlugin extends Plugin
               'headers' => ['content-Type' => 'application/json'],
               'auth' => [$token, ''],
               'body' => json_encode(["urls" => $urls]),
-              ]);
+            ]);
           }
-		  
-		  // PRETTIFY URLS
-		  echo '<strong>GOLIVE der folgenden URLs:</strong><br>';
+
+          // PRETTIFY URLS
+          echo '<strong>GOLIVE der folgenden URLs:</strong><br>';
           foreach($goliveURLs AS $goliveURL) {
             echo '<a href="'. $goliveURL .'">'. $goliveURL .'</a><br>';
           }
@@ -168,22 +168,60 @@ class KeycdnPurgePlugin extends Plugin
           foreach($urls AS $url) {
             echo '<a href="'. $url .'">'. $url .'</a><br>';
           }
-		  
-			Grav::instance()['log']->info('keycdn-purge: Http Response Body: ' . $res->getBody());
-			
-			echo '<br><br><italic>Antwort des CDN:'. $res->getBody() .'</italic>';
-		}
-		
-		
-      }, [], 'purgeGolive');
+
+          Grav::instance()['log']->info('keycdn-purge: Http Response Body: ' . $res->getBody());
+
+          echo '<br><br><italic>Antwort des CDN:'. $res->getBody() .'</italic>';
+        }
+
+
+      }, [], 'golive');
       //$job->at('*/5 * * * *');
       $job->at('* * * * *');
-      $job->output('logs/scheduler.golive.log');
-
+      $job->output('logs/scheduler.golives.log');
       if(!empty($golives)) {
-		$job->email(['bernd@autonotizen.de','info@diewebsitemacherei.de']);
+        $job->email(['bernd@autonotizen.de','info@diewebsitemacherei.de']);
+        //$job->email(['info@diewebsitemacherei.de']);
+        //$job->email(['account@diewebsitemacherei.de']);
       }
+
+      $jobUpcoming = $scheduler->addFunction(function () use ($upcomings) {
+
+        $keyHost = Grav::instance()['config']->get('plugins.keycdn-purge.cache_key_host.enabled') ? $this->config->get('plugins.keycdn-purge.cache_key_host.url') : '';
+
+        if(!empty($upcomings)) {
+
+          // collect URLS
+          $urls = [];
+
+          foreach ($upcomings as $upcoming) {
+            $golivePage = new Page;
+            $golivePage = $golivePage->init(new SplFileInfo($upcoming['file']));
+
+            $grav = Grav::instance();
+            $primaryURL = $keyHost . preg_replace('/[0-9]+\./u', '', str_replace('user/pages', '', $golivePage->path()));
+            $urls[] = $primaryURL;
+
+            // PRETTIFY URLS
+            echo '<strong>Golive der folgenden URLs innerhalb der nächsten 12 Stunden :</strong><br>';
+            foreach ($urls as $url) {
+              echo '<a href="' . $url . '">' . $url . '</a><br>';
+            }
+          }
+        }
+      }, [], 'upcomingGolive');
+      $jobUpcoming->at('15 */6 * * *');
+      //$jobUpcoming->at('* * * * *');
+      $jobUpcoming->output('logs/scheduler.upcoming.log');
+
+      if(!empty($upcomings)) {
+        $jobUpcoming->email(['bernd@autonotizen.de','info@diewebsitemacherei.de']);
+        //$jobUpcoming->email(['info@diewebsitemacherei.de']);
+      }
+
+
     }
+
   }
 
   public function purgeSitemap()
@@ -277,7 +315,7 @@ class KeycdnPurgePlugin extends Plugin
 
       if (!empty($purge->hersteller)) {
         foreach ($purge->hersteller as $hersteller) {
-          $urls[] = $keyHost . '/automarken/hersteller:' . $hersteller;
+          $urls[] = $keyHost . '/automarken/hersteller:' . urlencode($hersteller);
         }
       }
 
@@ -294,7 +332,7 @@ class KeycdnPurgePlugin extends Plugin
         'body' => json_encode(["urls" => $urls]),
       ]);
 
-      $this->grav['log']->info('keycdn-purge: Http Response Body: ' . $res->getBody());
+      $this->grav['log']->info('keycdn-purge-on-shutdown: Http Response Body: ' . $res->getBody());
 
       \file_put_contents(TMP_FILE, json_encode(['purge' => false, 'purging' => false, 'hersteller' => []]));
     }
