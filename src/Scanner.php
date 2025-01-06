@@ -17,7 +17,7 @@ class Scanner {
 
         $data = [
           'file' => $file,
-          'title' => $yaml['title'] .' '. @$yaml['subtitle']
+          'title' => @$yaml['title'] .' '. @$yaml['subtitle']
         ];
 
         if(isset($yaml['published'])) {
@@ -55,7 +55,7 @@ class Scanner {
     });
   }
 
-  public static function filterUpcomingGolive() {
+  public static function filterUpcomingGolive($treshold = 150) {
     self::$files = [];
     self::scan('user/pages');
     $golive = [];
@@ -63,7 +63,7 @@ class Scanner {
       if(!isset($file['published']) && isset($file['publish_date'])) {
         $publishTimestamp = strtotime($file['publish_date']);
         $goliveTresholdMin = time()-1;
-        $goliveTresholdMax = time()+150;
+        $goliveTresholdMax = time()+$treshold;
 
         if($publishTimestamp >= $goliveTresholdMin) {
 
@@ -75,7 +75,7 @@ class Scanner {
 
     return $golive;
   }
-
+  
   public static function filterGoliveNow() {
     self::$files = [];
     self::scan('user/pages');
@@ -141,7 +141,7 @@ class Scanner {
     // soll auch wieder offline?
     if(!isset($data['published'])
       && isset($data['unpublish_date'])) {
-
+		  
 		// offline in der Zukunft
       if(strtotime($data['unpublish_date']) > time()) {
         $data['real_published_status'] = 2;
@@ -157,11 +157,13 @@ class Scanner {
   }
 
   public static function showSearchableTable($files = []) {
+	  /*
     if(empty($files)) {
       self::scan('user/pages');
       self::sortFilesLatest();
       $files = self::$files;
     }
+	*/
 
     echo '<table id="golivescanner" class="display">'.
       '<thead>'.
